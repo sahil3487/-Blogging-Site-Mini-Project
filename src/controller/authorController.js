@@ -1,8 +1,6 @@
-const { response } = require("express");
 const authorModel = require("../models/authorModel");
-const validator = require('validation')
 const jwt = require('jsonwebtoken')
-const { isValidName, isValidTitle, isValidEmail, isValidPassword, isValidObjectId, isBoolean, isValid } = require("../middleware/validation")
+const { isValidName, isValidTitle, isValidEmail, isValidPassword, isValid } = require("../middleware/validation")
 
 
 
@@ -44,13 +42,13 @@ const createAuthor = async function (req, res) {
         if(checkEmail) return res.status(400).send({msg :"Email Already Registered"})
         
         if (!isValid(password)) {
-            return res.status(404).send({ msg: "Create Password" })
+            return res.status(400).send({ msg: "Create Password" })
         }
         if (!isValidPassword(password)) {
             return res.status(400).send({ msg: "Minimum eight characters, at least one letter and one number" })
         }
         let savedData = await authorModel.create(req.body);
-        return res.status(201).send({ msg: savedData });
+        return res.status(201).send({ status:true, data: savedData });
     }
     catch (err) {
 g    }
@@ -64,13 +62,17 @@ g    }
 const loginAuthor = async function (req, res) {
 
     try {
-        let emailId = req.body.emailId;
+        if (Object.keys(req.body).length<1) return res.status(400).send({ msg: "Insert Data : BAD REQUEST" })
+        
+        let email = req.body.email;
+        if(!email) return res.status(400).send({status:false,msg:"enter email"})
+
         let password = req.body.password;
-        if(!emailId) return res.status(400).send({status:false,msg:"enter emailId"})
         if(!password) return res.status(400).send({status:false,msg:"enter password"})
-        let author = await authorModel.findOne({ $and:[{email: emailId}, {password: password }]});
+
+        let author = await authorModel.findOne({ $and:[{email: email}, {password: password }]});
         if (!author)
-            return res.status(400).send({
+            return res.status(401).send({
                 status: false,
                 msg: "email or the password is not correct",
             });
@@ -80,7 +82,7 @@ const loginAuthor = async function (req, res) {
             },
             "group-25"
         );
-        return res.status(201).send({ status: true, token: token });
+        return res.status(200).send({ status: true, data: {token: token} });
     }
     catch (error) {
         res.status(500).send({ msg: error.message })
