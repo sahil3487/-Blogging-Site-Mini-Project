@@ -53,8 +53,7 @@ const createAuthor = async function (req, res) {
         return res.status(201).send({ msg: savedData });
     }
     catch (err) {
-        res.status(500).send({ msg: err.message })
-    }
+g    }
 
 };
 
