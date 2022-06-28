@@ -24,15 +24,15 @@ const createBlog = async function (req, res) {
         if (!isValid(body)) {
             return res.status(400).send({ msg: "Enter Body" })
         }
-       
+    
         if (!isValid(category)) {
             return res.status(400).send({ msg: "Enter Category" })
         }
-       
+    
         if (!isValid(authorId)) {
             return res.status(400).send({ msg: "Enter  Author Id" })
         }
-       
+    
         if (!isValidObjectId(authorId)) {
             return res.status(400).send({ msg: "Enter Valid Author Id" })
         }
@@ -153,10 +153,10 @@ let queryDelete = async function (req, res) {
         
         let blogs= await blogModel.find(data)
         if (blogs.length<1) return res.req(404).send({ status: false, msg: "blog does not exist" })
-       
-       let deletedBlogs = await blogModel.updateMany(
+    
+    let deletedBlogs = await blogModel.updateMany(
         {}
-       )
+    )
         return res.status(200).send({ status: true, msg: "blog is deleted sucessfully" })
 
     } catch (err) {
